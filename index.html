@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#7c5cbf">
+  <title>Mum-B</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-180.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Mum-B">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Login screen -->
+    <section id="screen-login" class="screen hidden">
+      <div class="login-box">
+        <img src="icon-192.png" alt="" class="login-logo">
+        <h1>Mum-B</h1>
+        <p class="muted">Looking after Mum, together.</p>
+        <form id="login-form">
+          <input type="email" id="login-email" placeholder="Your email" required autocomplete="email">
+          <button type="submit" class="btn primary full">Email me a login link</button>
+        </form>
+        <p id="login-msg" class="muted small"></p>
+      </div>
+    </section>
+
+    <!-- Not on the family list -->
+    <section id="screen-noaccess" class="screen hidden">
+      <div class="login-box">
+        <h1>Almost there</h1>
+        <p>You're signed in, but not on the family list yet. Ask Kade (or whoever set this up) to add your email, then reopen the app.</p>
+        <button id="noaccess-signout" class="btn full">Sign out</button>
+      </div>
+    </section>
+
+    <!-- Main app -->
+    <div id="screen-main" class="hidden">
+      <header id="topbar">
+        <span id="topbar-title">Today</span>
+        <button id="btn-add" class="btn-icon" title="Add">＋</button>
+      </header>
+
+      <main id="view"></main>
+
+      <nav id="tabbar">
+        <button data-tab="today" class="tab active"><span class="tab-ico">🏠</span>Today</button>
+        <button data-tab="calendar" class="tab"><span class="tab-ico">📅</span>Calendar</button>
+        <button data-tab="roster" class="tab"><span class="tab-ico">🧑‍🤝‍🧑</span>Roster</button>
+        <button data-tab="tasks" class="tab"><span class="tab-ico">✅</span>Tasks</button>
+        <button data-tab="family" class="tab"><span class="tab-ico">⚙️</span>Family</button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Event dialog -->
+  <dialog id="dlg-event">
+    <form method="dialog" id="form-event">
+      <h2 id="dlg-event-title">Add to Mum's calendar</h2>
+      <label>What <input type="text" id="ev-title" required placeholder="e.g. GP appointment"></label>
+      <label>Type
+        <select id="ev-category">
+          <option value="medical">Medical</option>
+          <option value="appointment">Appointment</option>
+          <option value="social">Social</option>
+          <option value="family">Family</option>
+          <option value="other" selected>Other</option>
+        </select>
+      </label>
+      <label>Date <input type="date" id="ev-date" required></label>
+      <div class="row2">
+        <label>Start <input type="time" id="ev-start" required></label>
+        <label>End <input type="time" id="ev-end"></label>
+      </div>
+      <label>Where <input type="text" id="ev-location" placeholder="optional"></label>
+      <label>Notes <textarea id="ev-notes" rows="2" placeholder="optional"></textarea></label>
+      <div class="dlg-actions">
+        <button type="button" class="btn danger hidden" id="ev-delete">Delete</button>
+        <span class="spacer"></span>
+        <button type="button" class="btn" data-close>Cancel</button>
+        <button type="submit" class="btn primary">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Task dialog -->
+  <dialog id="dlg-task">
+    <form method="dialog" id="form-task">
+      <h2>Add a task</h2>
+      <label>Task <input type="text" id="tk-title" required placeholder="e.g. Refill Webster pack"></label>
+      <label>Who's on it
+        <select id="tk-assignee"><option value="">Anyone</option></select>
+      </label>
+      <label>Due <input type="date" id="tk-due"></label>
+      <label>Details <textarea id="tk-details" rows="2" placeholder="optional"></textarea></label>
+      <div class="dlg-actions">
+        <span class="spacer"></span>
+        <button type="button" class="btn" data-close>Cancel</button>
+        <button type="submit" class="btn primary">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Shift dialog -->
+  <dialog id="dlg-shift">
+    <form method="dialog" id="form-shift">
+      <h2 id="dlg-shift-title">Who's with Mum?</h2>
+      <div id="shift-people" class="people-picker"></div>
+      <label>Note <input type="text" id="sh-note" placeholder="optional, e.g. taking her to lunch"></label>
+      <div class="dlg-actions">
+        <button type="button" class="btn danger hidden" id="sh-clear">Clear slot</button>
+        <span class="spacer"></span>
+        <button type="button" class="btn" data-close>Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Member dialog -->
+  <dialog id="dlg-member">
+    <form method="dialog" id="form-member">
+      <h2>Add family member</h2>
+      <label>Name <input type="text" id="mb-name" required placeholder="e.g. Sarah"></label>
+      <label>Email <input type="email" id="mb-email" required placeholder="they'll log in with this"></label>
+      <label>Colour <input type="color" id="mb-color" value="#e07a5f"></label>
+      <div class="dlg-actions">
+        <span class="spacer"></span>
+        <button type="button" class="btn" data-close>Cancel</button>
+        <button type="submit" class="btn primary">Add</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
