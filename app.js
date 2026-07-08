@@ -73,13 +73,27 @@ function show(which) {
   $('#screen-main').classList.toggle('hidden', which !== 'main');
 }
 
+let pendingEmail = null;
+
 $('#login-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const email = $('#login-email').value.trim();
   $('#login-msg').textContent = 'Sending…';
   const appUrl = location.origin + location.pathname.replace(/index\.html$/, '');
   const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: appUrl } });
-  $('#login-msg').textContent = error ? `Hmm: ${error.message}` : 'Check your email and tap the link. You can close this tab.';
+  if (error) { $('#login-msg').textContent = `Hmm: ${error.message}`; return; }
+  pendingEmail = email;
+  $('#otp-form').classList.remove('hidden');
+  $('#login-msg').textContent = 'Check your email and type the 6-digit code here (or tap the link).';
+  $('#otp-code').focus();
+});
+
+$('#otp-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const token = $('#otp-code').value.trim();
+  $('#login-msg').textContent = 'Checking…';
+  const { error } = await supabase.auth.verifyOtp({ email: pendingEmail, token, type: 'email' });
+  if (error) $('#login-msg').textContent = `Hmm: ${error.message}. Codes expire after a while — resend if needed.`;
 });
 
 $('#noaccess-signout').addEventListener('click', () => supabase.auth.signOut());
