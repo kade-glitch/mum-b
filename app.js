@@ -44,7 +44,18 @@ function relDay(d) {
 }
 
 // ---------- auth ----------
+function surfaceAuthError() {
+  const h = new URLSearchParams(location.hash.slice(1));
+  if (h.get('error')) {
+    $('#login-msg').textContent = h.get('error_code') === 'otp_expired'
+      ? 'That link had already expired or been used. Request a fresh one and tap the newest email.'
+      : `Sign-in problem: ${h.get('error_description') || h.get('error')}`;
+    history.replaceState(null, '', location.pathname);
+  }
+}
+
 async function init() {
+  surfaceAuthError();
   const { data: { session } } = await supabase.auth.getSession();
   S.session = session;
   supabase.auth.onAuthStateChange((_e, sess) => {
@@ -84,8 +95,7 @@ $('#login-form').addEventListener('submit', async (e) => {
   if (error) { $('#login-msg').textContent = `Hmm: ${error.message}`; return; }
   pendingEmail = email;
   $('#otp-form').classList.remove('hidden');
-  $('#login-msg').textContent = 'Check your email and type the 6-digit code here (or tap the link).';
-  $('#otp-code').focus();
+  $('#login-msg').textContent = 'Check your email and tap the newest link. If the email shows a 6-digit code, you can type it here instead.';
 });
 
 $('#otp-form').addEventListener('submit', async (e) => {
